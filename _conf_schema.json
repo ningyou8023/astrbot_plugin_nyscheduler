@@ -33,7 +33,7 @@
       "text",
       "image"
     ],
-    "default": "text"
+    "default": "image"
   },
   "enable_moyu": {
     "description": "开启或关闭摸鱼推送",
