@@ -1,8 +1,8 @@
-# astrbot_plugin_scheduler
+# astrbot_plugin_nyscheduler
 
 ## 项目简介
 
-`astrbot_plugin_scheduler` 是一个为 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 设计的“定时推送”插件，聚合每日 60 秒新闻、摸鱼日历、今日金价、AI 资讯四类内容，并在设定时间自动推送到指定群组。除定时推送与管理员维护命令外，支持普通用户的无参数查询指令（如 `/新闻`、`/60s`、`/摸鱼`、`/金价`、`/AI资讯`）。
+`astrbot_plugin_nyscheduler` 是一个为 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 设计的“定时推送”插件，聚合每日 60 秒新闻、摸鱼日历、今日金价、AI 资讯四类内容，并在设定时间自动推送到指定群组。除定时推送与管理员维护命令外，支持普通用户的无参数查询指令（如 `/新闻`、`/60s`、`/摸鱼`、`/金价`、`/AI资讯`）。
 
 ## 功能特性
 
@@ -17,7 +17,7 @@
 
 1. 克隆或下载本插件到 AstrBot 插件（/data/plugin/）目录：
    ```bash
-   git clone https://github.com/ningyou8023/astrbot_plugin_scheduler.git
+   git clone https://github.com/ningyou8023/astrbot_plugin_nyscheduler.git
    ```
 2. 进入AstrBot网页插件配置界面，调整相关配置，并保存。
 

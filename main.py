@@ -13,7 +13,7 @@ from astrbot.core.message.message_event_result import MessageChain
 
 
 @register(
-    "astrbot_scheduler",
+    "astrbot_nyscheduler",
     "柠柚",
     "这是 AstrBot 的一个定时推送插件。包含60s，摸鱼日历，今日金价，AI资讯。",
     "1.0.0",
@@ -29,7 +29,7 @@ class Daily60sNewsPlugin(Star):
         self.groups = self.config.groups
         self.push_time = self.config.push_time
         self.news_api = getattr(self.config, "news_api", "https://api.nycnm.cn/API/60s.php")
-        self.format = getattr(self.config, "format", "text")
+        self.format = getattr(self.config, "format", "image")
         self.moyu_format = getattr(self.config, "moyu_format", "image")
         self.moyu_api = getattr(self.config, "moyu_api", "https://api.nycnm.cn/API/moyu.php")
         self.enable_news = getattr(self.config, "enable_news", True)
@@ -304,7 +304,7 @@ class Daily60sNewsPlugin(Star):
                         logger.info("[AI资讯] 星期日或星期一不推送")
                 await asyncio.sleep(60)
             except Exception as e:
-                logger.error(f"[scheduler] 定时任务出错: {e}")
+                logger.error(f"[nyscheduler] 定时任务出错: {e}")
                 traceback.print_exc()
                 await asyncio.sleep(300)
 
