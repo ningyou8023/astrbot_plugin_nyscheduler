@@ -16,7 +16,7 @@ from astrbot.core.message.message_event_result import MessageChain
     "astrbot_nyscheduler",
     "柠柚",
     "这是 AstrBot 的一个定时推送插件。包含60s，摸鱼日历，今日金价，AI资讯。",
-    "1.0.0",
+    "1.0.1",
 )
 class Daily60sNewsPlugin(Star):
     """
@@ -40,6 +40,7 @@ class Daily60sNewsPlugin(Star):
         self.gold_api = getattr(self.config, "gold_api", "https://api.nycnm.cn/API/jinjia.php")
         self.ai_format = getattr(self.config, "ai_format", "image")
         self.ai_api = getattr(self.config, "ai_api", "https://api.nycnm.cn/API/aizixun.php")
+        self.api_key = getattr(self.config, "api_key", "")
         logger.info(f"插件配置: {self.config}")
         self._monitoring_task = asyncio.create_task(self._daily_task())
 
@@ -167,6 +168,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.news_api}?date={date}&format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as response:
                         if response.status != 200:
@@ -201,6 +204,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.news_api}?date={date}&format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as response:
                         if response.status != 200:
@@ -372,6 +377,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.moyu_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as resp:
                         if resp.status != 200:
@@ -410,6 +417,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.moyu_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as resp:
                         if resp.status != 200:
@@ -557,6 +566,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.gold_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as resp:
                         if resp.status != 200:
@@ -595,6 +606,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.gold_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as resp:
                         if resp.status != 200:
@@ -742,6 +755,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.ai_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as resp:
                         if resp.status != 200:
@@ -780,6 +795,8 @@ class Daily60sNewsPlugin(Star):
         for attempt in range(retries):
             try:
                 url = f"{self.ai_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=timeout) as resp:
                         if resp.status != 200:

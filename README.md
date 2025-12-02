@@ -4,6 +4,8 @@
 
 `astrbot_plugin_nyscheduler` 是一个为 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 设计的“定时推送”插件，聚合每日 60 秒新闻、摸鱼日历、今日金价、AI 资讯四类内容，并在设定时间自动推送到指定群组。除定时推送与管理员维护命令外，支持普通用户的无参数查询指令（如 `/新闻`、`/60s`、`/摸鱼`、`/金价`、`/AI资讯`）。
 
+当前版本：v1.0.1
+
 ## 功能特性
 
 - 定时自动推送“每日 60 秒新闻”、“摸鱼日历”、“今日金价”、“AI 资讯”到指定群组
@@ -80,6 +82,7 @@ CoCo机器人:GroupMessage:QQ群号或QQ号
 - 通用：
   - `groups`：接收推送的群组唯一标识符列表。
   - `push_time`：定时推送时间，格式 `HH:MM`。
+  - `api_key`：全局接口密钥（可留空）。填写后会在所有请求上附加 `apikey` 参数。
 
 - 新闻：
   - `enable_news`：是否开启新闻推送。
@@ -103,6 +106,7 @@ CoCo机器人:GroupMessage:QQ群号或QQ号
   - 自动推送遵循统一的 `push_time`，并在星期日与星期一不推送。
 
 接口示例：
+- 所有接口均可选附加 `apikey` 参数：`?apikey=YOUR_KEY`
 - 新闻 JSON：`https://api.nycnm.cn/API/60s.php?format=json`
 - 新闻 文本：`https://api.nycnm.cn/API/60s.php?format=text`
 - 新闻 图片：`https://api.nycnm.cn/API/60s.php?format=image`

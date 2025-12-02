@@ -12,6 +12,12 @@
     "hint": "填写推送的时间，如: 08:00,18:00",
     "default": "08:00"
   },
+  "api_key": {
+    "description": "全局API密钥",
+    "type": "string",
+    "hint": "统一密钥，所有接口共享",
+    "default": ""
+  },
   "enable_news": {
     "description": "开启或关闭新闻推送",
     "type": "bool",
