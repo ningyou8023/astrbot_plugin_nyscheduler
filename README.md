@@ -2,13 +2,13 @@
 
 ## 项目简介
 
-`astrbot_plugin_nyscheduler` 是一个为 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 设计的“定时推送”插件，聚合每日 60 秒新闻、摸鱼日历、今日金价、AI 资讯四类内容，并在设定时间自动推送到指定群组。除定时推送与管理员维护命令外，支持普通用户的无参数查询指令（如 `/新闻`、`/60s`、`/摸鱼`、`/金价`、`/AI资讯`）。
+`astrbot_plugin_nyscheduler` 是一个为 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 设计的“定时推送”插件，聚合每日 60 秒新闻、摸鱼日历、今日金价、AI 资讯、历史今日五类内容，并在设定时间自动推送到指定群组。除定时推送与管理员维护命令外，支持普通用户的无参数查询指令（如 `/新闻`、`/60s`、`/摸鱼`、`/金价`、`/AI资讯`、`/历史今日`）。
 
-当前版本：v1.0.1
+当前版本：v1.0.3
 
 ## 功能特性
 
-- 定时自动推送“每日 60 秒新闻”、“摸鱼日历”、“今日金价”、“AI 资讯”到指定群组
+- 定时自动推送“每日 60 秒新闻”、“摸鱼日历”、“今日金价”、“AI 资讯”、“历史今日”到指定群组
 - 管理员维护命令：状态查询、手动推送、实时拉取更新
 - 统一的群组与推送时间配置
 - 实时拉取并发送，不进行本地缓存保存
@@ -61,11 +61,13 @@ CoCo机器人:GroupMessage:QQ群号或QQ号
   - 摸鱼类：`/摸鱼`、`/摸鱼日历`
   - 金价类：`/金价`、`/黄金`
   - AI 资讯：`/AI资讯`、`/AI新闻`
+  - 历史今日：`/历史今日`
 - 管理员命令（使用“××管理”命令组）：
   - 新闻管理：`/新闻管理 status`、`/新闻管理 push`、`/新闻管理 update_news`
   - 摸鱼管理：`/摸鱼管理 status`、`/摸鱼管理 push`、`/摸鱼管理 update`
   - 金价管理：`/金价管理 status`、`/金价管理 push`、`/金价管理 update`
   - AI资讯管理：`/AI资讯管理 status`、`/AI资讯管理 push`、`/AI资讯管理 update`
+  - 历史今日管理：`/历史今日管理 status`、`/历史今日管理 push`、`/历史今日管理 update`
 
 特别说明：AI 资讯在星期日和星期一不进行自动推送。
 
@@ -88,38 +90,41 @@ CoCo机器人:GroupMessage:QQ群号或QQ号
 - 新闻：
   - `enable_news`：是否开启新闻推送。
   - `news_api`：新闻接口地址，默认 `https://api.nycnm.cn/API/60s.php`。
-  - `format`：接口返回格式，`json`/`text`/`image`。
+  - `format`：接口返回格式，`text`/`image`。
 
 - 摸鱼：
   - `enable_moyu`：是否开启摸鱼推送。
-  - `moyu_format`：接口返回格式，`json`/`text`/`image`，默认 `image`。
+  - `moyu_format`：接口返回格式，`text`/`image`，默认 `image`。
   - `moyu_api`：摸鱼接口地址，默认 `https://api.nycnm.cn/API/moyu.php`。
 
 - 金价：
   - `enable_gold`：是否开启金价推送。
-  - `gold_format`：接口返回格式，`json`/`text`/`image`，默认 `image`。
+  - `gold_format`：接口返回格式，`text`/`image`，默认 `image`。
   - `gold_api`：金价接口地址，默认 `https://api.nycnm.cn/API/jinjia.php`。
 
 - AI 资讯：
   - `enable_ai`：是否开启 AI 资讯推送。
-  - `ai_format`：接口返回格式，`json`/`text`/`image`，默认 `image`。
+  - `ai_format`：接口返回格式，`text`/`image`，默认 `image`。
   - `ai_api`：AI 资讯接口地址，默认 `https://api.nycnm.cn/API/aizixun.php`。
   - 自动推送遵循统一的 `push_time`，并在星期日与星期一不推送。
 
+- 历史今日：
+  - `enable_history`：是否开启历史今日推送。
+  - `history_format`：接口返回格式，`text`/`image`，默认 `image`。
+  - `history_api`：历史今日接口地址，默认 `https://api.nycnm.cn/API/history.php`。
+
 接口示例：
 - 所有接口均可选附加 `apikey` 参数：`?apikey=YOUR_KEY`
-- 新闻 JSON：`https://api.nycnm.cn/API/60s.php?format=json`
 - 新闻 文本：`https://api.nycnm.cn/API/60s.php?format=text`
 - 新闻 图片：`https://api.nycnm.cn/API/60s.php?format=image`
-- 摸鱼 JSON：`https://api.nycnm.cn/API/moyu.php?format=json`
 - 摸鱼 文本：`https://api.nycnm.cn/API/moyu.php?format=text`
 - 摸鱼 图片：`https://api.nycnm.cn/API/moyu.php?format=image`
-- 金价 JSON：`https://api.nycnm.cn/API/jinjia.php?format=json`
 - 金价 文本：`https://api.nycnm.cn/API/jinjia.php?format=text`
 - 金价 图片：`https://api.nycnm.cn/API/jinjia.php?format=image`
-- AI 资讯 JSON：`https://api.nycnm.cn/API/aizixun.php?format=json`
 - AI 资讯 文本：`https://api.nycnm.cn/API/aizixun.php?format=text`
 - AI 资讯 图片：`https://api.nycnm.cn/API/aizixun.php?format=image`
+- 历史今日 文本：`https://api.nycnm.cn/API/history.php?format=text`
+- 历史今日 图片：`https://api.nycnm.cn/API/history.php?format=image`
 
 ## 许可证说明
 

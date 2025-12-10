@@ -16,7 +16,7 @@ from astrbot.core.message.message_event_result import MessageChain
     "astrbot_nyscheduler",
     "柠柚",
     "这是 AstrBot 的一个定时推送插件。包含60s，摸鱼日历，今日金价，AI资讯。",
-    "1.0.2",
+    "1.0.3",
 )
 class Daily60sNewsPlugin(Star):
     """
@@ -36,10 +36,13 @@ class Daily60sNewsPlugin(Star):
         self.enable_moyu = getattr(self.config, "enable_moyu", True)
         self.enable_gold = getattr(self.config, "enable_gold", True)
         self.enable_ai = getattr(self.config, "enable_ai", True)
+        self.enable_history = getattr(self.config, "enable_history", True)
         self.gold_format = getattr(self.config, "gold_format", "image")
         self.gold_api = getattr(self.config, "gold_api", "https://api.nycnm.cn/API/jinjia.php")
         self.ai_format = getattr(self.config, "ai_format", "image")
         self.ai_api = getattr(self.config, "ai_api", "https://api.nycnm.cn/API/aizixun.php")
+        self.history_format = getattr(self.config, "history_format", "image")
+        self.history_api = getattr(self.config, "history_api", "https://api.nycnm.cn/API/history.php")
         self.api_key = getattr(self.config, "api_key", "")
         self.timeout = getattr(self.config, "timeout", 30)
         logger.info(f"插件配置: {self.config}")
@@ -308,6 +311,8 @@ class Daily60sNewsPlugin(Star):
                         await self._ai_send_to_groups()
                     else:
                         logger.info("[AI资讯] 星期日或星期一不推送")
+                if self.enable_history:
+                    await self._send_history_to_groups()
                 await asyncio.sleep(60)
             except Exception as e:
                 logger.error(f"[nyscheduler] 定时任务出错: {e}")
@@ -957,3 +962,177 @@ class Daily60sNewsPlugin(Star):
     @filter.command("AI新闻")
     async def cmd_ai_news(self, event: AstrMessageEvent):
         await self.cmd_ai_simple(event)
+
+    @filter.command_group("历史今日管理")
+    def history(self):
+        pass
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @history.command("status")
+    async def history_status(self, event: AstrMessageEvent):
+        sleep_time = self._calculate_sleep_time()
+        h = int(sleep_time / 3600)
+        m = int((sleep_time % 3600) / 60)
+        yield event.plain_result(
+            f"历史今日运行中\n推送时间: {self.push_time}\n默认格式: {self.history_format}\n距离下次推送: {h}小时{m}分钟"
+        )
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @history.command("push")
+    async def history_push(self, event: AstrMessageEvent):
+        await self._send_history_to_groups()
+        yield event.plain_result(f"{event.get_sender_name()}: 已向群组推送历史今日")
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @history.command("update")
+    async def history_update(self, event: AstrMessageEvent):
+        content, ok = await self._fetch_history_text()
+        if ok:
+            yield event.plain_result(f"{event.get_sender_name()}:已拉取最新历史今日\n{content[:50]}...")
+        else:
+            yield event.plain_result(f"{event.get_sender_name()}:获取失败 {content}")
+
+    @filter.command("历史今日")
+    async def cmd_history_simple(self, event: AstrMessageEvent):
+        try:
+            if self.history_format == "text":
+                content, ok = await self._fetch_history_text()
+                if ok:
+                    await event.send(event.plain_result(content))
+                else:
+                    await event.send(event.plain_result(str(content)))
+            else:
+                path, ok = await self._fetch_history_image_path()
+                if ok:
+                    await event.send(MessageChain().file_image(path))
+                    try:
+                        os.remove(path)
+                    except Exception:
+                        pass
+                else:
+                    await event.send(event.plain_result(str(path)))
+        except Exception as e:
+            await event.send(event.plain_result(f"获取历史今日失败: {e}"))
+
+    async def _fetch_history_text(self) -> Tuple[str, bool]:
+        retries = 3
+        timeout = self.timeout
+        fmt = self.history_format
+        if fmt == "image":
+            fmt = "json"
+        for attempt in range(retries):
+            try:
+                url = f"{self.history_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, timeout=timeout) as resp:
+                        if resp.status != 200:
+                            raise Exception(f"状态码: {resp.status}")
+                        if fmt == "json":
+                            data = await resp.json(content_type=None)
+                            txt = None
+                            def walk(v):
+                                nonlocal txt
+                                if isinstance(v, dict):
+                                    for vv in v.values():
+                                        walk(vv)
+                                elif isinstance(v, list):
+                                    for vv in v:
+                                        walk(vv)
+                                elif isinstance(v, str):
+                                    txt = txt or v
+                            walk(data)
+                            return (txt or str(data)), True
+                        else:
+                            content = await resp.read()
+                            text = content.decode("utf-8", errors="ignore")
+                            return text, True
+            except Exception as e:
+                logger.error(f"[history] 请求失败 {attempt + 1}/{retries}: {e}")
+                if attempt == retries - 1:
+                    return f"接口报错: {e}", False
+                await asyncio.sleep(1)
+
+    async def _fetch_history_image_path(self) -> Tuple[str, bool]:
+        retries = 3
+        timeout = self.timeout
+        fmt = self.history_format
+        if fmt == "text":
+            fmt = "json"
+        for attempt in range(retries):
+            try:
+                url = f"{self.history_api}?format={fmt}"
+                if self.api_key:
+                    url += f"&apikey={self.api_key}"
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, timeout=timeout) as resp:
+                        if resp.status != 200:
+                            raise Exception(f"状态码: {resp.status}")
+                        if fmt == "json":
+                            data = await resp.json(content_type=None)
+                            img_url = None
+                            def walk(v):
+                                nonlocal img_url
+                                if isinstance(v, dict):
+                                    for vv in v.values():
+                                        walk(vv)
+                                elif isinstance(v, list):
+                                    for vv in v:
+                                        walk(vv)
+                                elif isinstance(v, str):
+                                    if v.startswith("http") and (".jpg" in v or ".jpeg" in v or ".png" in v):
+                                        img_url = img_url or v
+                            walk(data)
+                            if not img_url:
+                                raise Exception("JSON未找到图片URL")
+                            async with session.get(img_url, timeout=timeout) as ir:
+                                if ir.status != 200:
+                                    raise Exception(f"图片状态码: {ir.status}")
+                                b = await ir.read()
+                                f = tempfile.NamedTemporaryFile(delete=False, suffix=".jpeg")
+                                try:
+                                    f.write(b)
+                                    f.flush()
+                                    return f.name, True
+                                finally:
+                                    f.close()
+                        else:
+                            b = await resp.read()
+                            f = tempfile.NamedTemporaryFile(delete=False, suffix=".jpeg")
+                            try:
+                                f.write(b)
+                                f.flush()
+                                return f.name, True
+                            finally:
+                                f.close()
+            except Exception as e:
+                logger.error(f"[history] 请求失败 {attempt + 1}/{retries}: {e}")
+                if attempt == retries - 1:
+                    return f"接口报错: {e}", False
+                await asyncio.sleep(1)
+
+    async def _send_history_to_groups(self):
+        try:
+            if self.history_format == "text":
+                content, ok = await self._fetch_history_text()
+                if not ok:
+                    raise Exception(str(content))
+                for target in self.config.groups:
+                    mc = MessageChain().message(content)
+                    await self.context.send_message(target, mc)
+                    await asyncio.sleep(2)
+            else:
+                path, ok = await self._fetch_history_image_path()
+                if not ok:
+                    raise Exception(str(path))
+                for target in self.config.groups:
+                    mc = MessageChain().file_image(path)
+                    await self.context.send_message(target, mc)
+                    await asyncio.sleep(2)
+                try:
+                    os.remove(path)
+                except Exception:
+                    pass
+        except Exception as e:
+            logger.error(f"[history] 推送失败: {e}")

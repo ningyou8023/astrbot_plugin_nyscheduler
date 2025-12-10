@@ -32,16 +32,15 @@
   "news_api": {
     "description": "今日新闻api",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/60s.php 接口，客户端参数支持 ?format=json/text/image",
+    "hint": "使用 https://api.nycnm.cn/API/60s.php 接口",
     "obvious_hint": true,
     "default": "https://api.nycnm.cn/API/60s.php"
   },
   "format": {
     "description": "接口返回格式",
     "type": "string",
-    "hint": "支持 json/text/image 三种格式",
+    "hint": "支持 text/image 两种格式",
     "options": [
-      "json",
       "text",
       "image"
     ],
@@ -55,14 +54,14 @@
   "moyu_format": {
     "description": "摸鱼接口返回格式",
     "type": "string",
-    "hint": "支持 json/text/image 三种",
-    "options": ["json", "text", "image"],
+    "hint": "支持 text/image 两种",
+    "options": ["text", "image"],
     "default": "image"
   },
   "moyu_api": {
     "description": "摸鱼日历API",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/moyu.php 接口，参数 ?format=json/text/image",
+    "hint": "使用 https://api.nycnm.cn/API/moyu.php 接口",
     "obvious_hint": true,
     "default": "https://api.nycnm.cn/API/moyu.php"
   }
@@ -75,14 +74,14 @@
   "gold_format": {
     "description": "今日金价接口返回格式",
     "type": "string",
-    "hint": "支持 json/text/image 三种",
-    "options": ["json", "text", "image"],
+    "hint": "支持 text/image 两种",
+    "options": ["text", "image"],
     "default": "image"
   },
   "gold_api": {
     "description": "今日金价API",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/jinjia.php 接口，参数 ?format=image",
+    "hint": "使用 https://api.nycnm.cn/API/jinjia.php 接口",
     "obvious_hint": true,
     "default": "https://api.nycnm.cn/API/jinjia.php"
   },
@@ -94,15 +93,34 @@
   "ai_format": {
     "description": "AI资讯接口返回格式",
     "type": "string",
-    "hint": "支持 json/text/image 三种",
-    "options": ["json", "text", "image"],
+    "hint": "支持 text/image 两种",
+    "options": ["text", "image"],
     "default": "image"
   },
   "ai_api": {
     "description": "AI资讯API",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/aizixun.php 接口，参数 ?format=image",
+    "hint": "使用 https://api.nycnm.cn/API/aizixun.php 接口",
     "obvious_hint": true,
     "default": "https://api.nycnm.cn/API/aizixun.php"
+  },
+  "enable_history": {
+    "description": "开启或关闭历史今日推送",
+    "type": "bool",
+    "default": true
+  },
+  "history_format": {
+    "description": "历史今日接口返回格式",
+    "type": "string",
+    "hint": "支持 text/image 两种",
+    "options": ["text", "image"],
+    "default": "image"
+  },
+  "history_api": {
+    "description": "历史今日API",
+    "type": "string",
+    "hint": "使用 https://api.nycnm.cn/API/history.php 接口",
+    "obvious_hint": true,
+    "default": "https://api.nycnm.cn/API/history.php"
   }
 }
