@@ -16,7 +16,7 @@ from astrbot.core.message.message_event_result import MessageChain
     "astrbot_nyscheduler",
     "柠柚",
     "这是 AstrBot 的一个定时推送插件。包含60s，摸鱼日历，今日金价，AI资讯。",
-    "1.0.3",
+    "1.0.4",
 )
 class Daily60sNewsPlugin(Star):
     """
@@ -282,10 +282,31 @@ class Daily60sNewsPlugin(Star):
         :return: 距离下次推送的秒数
         """
         now = datetime.datetime.now()
-        hour, minute = map(int, self.push_time.split(":"))
-        next_push = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-        if next_push <= now:
-            next_push += datetime.timedelta(days=1)
+        # 支持多个时间点，使用中文或英文逗号分隔
+        time_strs = self.push_time.replace("，", ",").split(",")
+        candidates = []
+        
+        for t_str in time_strs:
+            parts = t_str.strip().split(":")
+            if len(parts) != 2:
+                continue
+            try:
+                h, m = map(int, parts)
+                target = now.replace(hour=h, minute=m, second=0, microsecond=0)
+                if target <= now:
+                    target += datetime.timedelta(days=1)
+                candidates.append(target)
+            except ValueError:
+                continue
+        
+        if not candidates:
+            # 默认 fallback 到 08:00
+            target = now.replace(hour=8, minute=0, second=0, microsecond=0)
+            if target <= now:
+                target += datetime.timedelta(days=1)
+            candidates.append(target)
+            
+        next_push = min(candidates)
         return (next_push - now).total_seconds()
 
     
