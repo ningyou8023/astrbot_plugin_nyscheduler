@@ -32,9 +32,9 @@
   "news_api": {
     "description": "今日新闻api",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/60s.php 接口",
+    "hint": "使用 https://api.nycnm.cn/api/v2/60s 接口",
     "obvious_hint": true,
-    "default": "https://api.nycnm.cn/API/60s.php"
+    "default": "https://api.nycnm.cn/api/v2/60s"
   },
   "format": {
     "description": "接口返回格式",
@@ -61,9 +61,9 @@
   "moyu_api": {
     "description": "摸鱼日历API",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/moyu.php 接口",
+    "hint": "使用 https://api.nycnm.cn/api/v2/moyu 接口",
     "obvious_hint": true,
-    "default": "https://api.nycnm.cn/API/moyu.php"
+    "default": "https://api.nycnm.cn/api/v2/moyu"
   }
   ,
   "enable_gold": {
@@ -81,9 +81,9 @@
   "gold_api": {
     "description": "今日金价API",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/jinjia.php 接口",
+    "hint": "使用 https://api.nycnm.cn/api/v2/jinjia 接口",
     "obvious_hint": true,
-    "default": "https://api.nycnm.cn/API/jinjia.php"
+    "default": "https://api.nycnm.cn/api/v2/jinjia"
   },
   "enable_ai": {
     "description": "开启或关闭AI资讯推送",
@@ -100,9 +100,9 @@
   "ai_api": {
     "description": "AI资讯API",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/aizixun.php 接口",
+    "hint": "使用 https://api.nycnm.cn/api/v2/aizixun 接口",
     "obvious_hint": true,
-    "default": "https://api.nycnm.cn/API/aizixun.php"
+    "default": "https://api.nycnm.cn/api/v2/aizixun"
   },
   "enable_history": {
     "description": "开启或关闭历史今日推送",
@@ -119,8 +119,8 @@
   "history_api": {
     "description": "历史今日API",
     "type": "string",
-    "hint": "使用 https://api.nycnm.cn/API/history.php 接口",
+    "hint": "使用 https://api.nycnm.cn/api/v2/history 接口",
     "obvious_hint": true,
-    "default": "https://api.nycnm.cn/API/history.php"
+    "default": "https://api.nycnm.cn/api/v2/history"
   }
 }

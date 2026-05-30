@@ -16,7 +16,7 @@ from astrbot.core.message.message_event_result import MessageChain
     "astrbot_nyscheduler",
     "柠柚",
     "这是 AstrBot 的一个定时推送插件。包含60s，摸鱼日历，今日金价，AI资讯。",
-    "1.0.4",
+    "1.0.5",
 )
 class Daily60sNewsPlugin(Star):
     """
@@ -28,21 +28,21 @@ class Daily60sNewsPlugin(Star):
         self.config = config
         self.groups = self.config.groups
         self.push_time = self.config.push_time
-        self.news_api = getattr(self.config, "news_api", "https://api.nycnm.cn/API/60s.php")
+        self.news_api = getattr(self.config, "news_api", "https://api.nycnm.cn/api/v2/60s")
         self.format = getattr(self.config, "format", "image")
         self.moyu_format = getattr(self.config, "moyu_format", "image")
-        self.moyu_api = getattr(self.config, "moyu_api", "https://api.nycnm.cn/API/moyu.php")
+        self.moyu_api = getattr(self.config, "moyu_api", "https://api.nycnm.cn/api/v2/moyu")
         self.enable_news = getattr(self.config, "enable_news", True)
         self.enable_moyu = getattr(self.config, "enable_moyu", True)
         self.enable_gold = getattr(self.config, "enable_gold", True)
         self.enable_ai = getattr(self.config, "enable_ai", True)
         self.enable_history = getattr(self.config, "enable_history", True)
         self.gold_format = getattr(self.config, "gold_format", "image")
-        self.gold_api = getattr(self.config, "gold_api", "https://api.nycnm.cn/API/jinjia.php")
+        self.gold_api = getattr(self.config, "gold_api", "https://api.nycnm.cn/api/v2/jinjia")
         self.ai_format = getattr(self.config, "ai_format", "image")
-        self.ai_api = getattr(self.config, "ai_api", "https://api.nycnm.cn/API/aizixun.php")
+        self.ai_api = getattr(self.config, "ai_api", "https://api.nycnm.cn/api/v2/aizixun")
         self.history_format = getattr(self.config, "history_format", "image")
-        self.history_api = getattr(self.config, "history_api", "https://api.nycnm.cn/API/history.php")
+        self.history_api = getattr(self.config, "history_api", "https://api.nycnm.cn/api/v2/history")
         self.api_key = getattr(self.config, "api_key", "")
         self.timeout = getattr(self.config, "timeout", 30)
         logger.info(f"插件配置: {self.config}")
