@@ -89,42 +89,42 @@ CoCo机器人:GroupMessage:QQ群号或QQ号
 
 - 新闻：
   - `enable_news`：是否开启新闻推送。
-  - `news_api`：新闻接口地址，默认 `https://api.nycnm.cn/API/60s.php`。
+  - `news_api`：新闻接口地址，默认 `https://api.nycnm.cn/api/v2/60s`。
   - `format`：接口返回格式，`text`/`image`。
 
 - 摸鱼：
   - `enable_moyu`：是否开启摸鱼推送。
   - `moyu_format`：接口返回格式，`text`/`image`，默认 `image`。
-  - `moyu_api`：摸鱼接口地址，默认 `https://api.nycnm.cn/API/moyu.php`。
+  - `moyu_api`：摸鱼接口地址，默认 `https://api.nycnm.cn/api/v2/moyu`。
 
 - 金价：
   - `enable_gold`：是否开启金价推送。
   - `gold_format`：接口返回格式，`text`/`image`，默认 `image`。
-  - `gold_api`：金价接口地址，默认 `https://api.nycnm.cn/API/jinjia.php`。
+  - `gold_api`：金价接口地址，默认 `https://api.nycnm.cn/api/v2/jinjia`。
 
 - AI 资讯：
   - `enable_ai`：是否开启 AI 资讯推送。
   - `ai_format`：接口返回格式，`text`/`image`，默认 `image`。
-  - `ai_api`：AI 资讯接口地址，默认 `https://api.nycnm.cn/API/aizixun.php`。
+  - `ai_api`：AI 资讯接口地址，默认 `https://api.nycnm.cn/api/v2/aizixun`。
   - 自动推送遵循统一的 `push_time`，并在星期日与星期一不推送。
 
 - 历史今日：
   - `enable_history`：是否开启历史今日推送。
   - `history_format`：接口返回格式，`text`/`image`，默认 `image`。
-  - `history_api`：历史今日接口地址，默认 `https://api.nycnm.cn/API/history.php`。
+  - `history_api`：历史今日接口地址，默认 `https://api.nycnm.cn/api/v2/history`。
 
 接口示例：
 - 所有接口均可选附加 `apikey` 参数：`?apikey=YOUR_KEY`
-- 新闻 文本：`https://api.nycnm.cn/API/60s.php?format=text`
-- 新闻 图片：`https://api.nycnm.cn/API/60s.php?format=image`
-- 摸鱼 文本：`https://api.nycnm.cn/API/moyu.php?format=text`
-- 摸鱼 图片：`https://api.nycnm.cn/API/moyu.php?format=image`
-- 金价 文本：`https://api.nycnm.cn/API/jinjia.php?format=text`
-- 金价 图片：`https://api.nycnm.cn/API/jinjia.php?format=image`
-- AI 资讯 文本：`https://api.nycnm.cn/API/aizixun.php?format=text`
-- AI 资讯 图片：`https://api.nycnm.cn/API/aizixun.php?format=image`
-- 历史今日 文本：`https://api.nycnm.cn/API/history.php?format=text`
-- 历史今日 图片：`https://api.nycnm.cn/API/history.php?format=image`
+- 新闻 文本：`https://api.nycnm.cn/api/v2/60s?format=text`
+- 新闻 图片：`https://api.nycnm.cn/api/v2/60s?format=image`
+- 摸鱼 文本：`https://api.nycnm.cn/api/v2/moyu?format=text`
+- 摸鱼 图片：`https://api.nycnm.cn/api/v2/moyu?format=image`
+- 金价 文本：`https://api.nycnm.cn/api/v2/jinjia?format=text`
+- 金价 图片：`https://api.nycnm.cn/api/v2/jinjia?format=image`
+- AI 资讯 文本：`https://api.nycnm.cn/api/v2/aizixun?format=text`
+- AI 资讯 图片：`https://api.nycnm.cn/api/v2/aizixun?format=image`
+- 历史今日 文本：`https://api.nycnm.cn/api/v2/history?format=text`
+- 历史今日 图片：`https://api.nycnm.cn/api/v2/history?format=image`
 
 ## 许可证说明
 
