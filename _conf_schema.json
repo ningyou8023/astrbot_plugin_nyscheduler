@@ -29,6 +29,12 @@
     "type": "bool",
     "default": true
   },
+  "news_push_time": {
+    "description": "新闻独立推送时间（留空则使用全局）",
+    "type": "string",
+    "hint": "如: 08:00，留空则跟随全局推送时间",
+    "default": ""
+  },
   "news_api": {
     "description": "今日新闻api",
     "type": "string",
@@ -51,6 +57,12 @@
     "type": "bool",
     "default": true
   },
+  "moyu_push_time": {
+    "description": "摸鱼日历独立推送时间（留空则使用全局）",
+    "type": "string",
+    "hint": "如: 09:00，留空则跟随全局推送时间",
+    "default": ""
+  },
   "moyu_format": {
     "description": "摸鱼接口返回格式",
     "type": "string",
@@ -71,6 +83,12 @@
     "type": "bool",
     "default": true
   },
+  "gold_push_time": {
+    "description": "金价独立推送时间（留空则使用全局）",
+    "type": "string",
+    "hint": "如: 10:00，留空则跟随全局推送时间",
+    "default": ""
+  },
   "gold_format": {
     "description": "今日金价接口返回格式",
     "type": "string",
@@ -90,6 +108,12 @@
     "type": "bool",
     "default": true
   },
+  "ai_push_time": {
+    "description": "AI资讯独立推送时间（留空则使用全局）",
+    "type": "string",
+    "hint": "如: 08:30，留空则跟随全局推送时间",
+    "default": ""
+  },
   "ai_format": {
     "description": "AI资讯接口返回格式",
     "type": "string",
@@ -108,6 +132,12 @@
     "description": "开启或关闭历史今日推送",
     "type": "bool",
     "default": true
+  },
+  "history_push_time": {
+    "description": "历史今日独立推送时间（留空则使用全局）",
+    "type": "string",
+    "hint": "如: 08:00，留空则跟随全局推送时间",
+    "default": ""
   },
   "history_format": {
     "description": "历史今日接口返回格式",

@@ -15,8 +15,8 @@ from astrbot.core.message.message_event_result import MessageChain
 @register(
     "astrbot_nyscheduler",
     "柠柚",
-    "这是 AstrBot 的一个定时推送插件。包含60s，摸鱼日历，今日金价，AI资讯。",
-    "1.0.5",
+    "这是 AstrBot 的一个定时推送插件。包含60s，摸鱼日历，今日金价，AI资讯，历史今日。",
+    "1.0.6",
 )
 class Daily60sNewsPlugin(Star):
     """
@@ -45,8 +45,19 @@ class Daily60sNewsPlugin(Star):
         self.history_api = getattr(self.config, "history_api", "https://api.nycnm.cn/api/v2/history")
         self.api_key = getattr(self.config, "api_key", "")
         self.timeout = getattr(self.config, "timeout", 30)
+        self.news_push_time = getattr(self.config, "news_push_time", "")
+        self.moyu_push_time = getattr(self.config, "moyu_push_time", "")
+        self.gold_push_time = getattr(self.config, "gold_push_time", "")
+        self.ai_push_time = getattr(self.config, "ai_push_time", "")
+        self.history_push_time = getattr(self.config, "history_push_time", "")
         logger.info(f"插件配置: {self.config}")
-        self._monitoring_task = asyncio.create_task(self._daily_task())
+        self._tasks = [
+            asyncio.create_task(self._item_task("news")),
+            asyncio.create_task(self._item_task("moyu")),
+            asyncio.create_task(self._item_task("gold")),
+            asyncio.create_task(self._item_task("ai")),
+            asyncio.create_task(self._item_task("history")),
+        ]
 
     @filter.command_group("新闻管理")
     def mnews(self):
@@ -61,16 +72,22 @@ class Daily60sNewsPlugin(Star):
         """
         检查插件状态（仅管理员）
         """
-        sleep_time = self._calculate_sleep_time()
-        hours = int(sleep_time / 3600)
-        minutes = int((sleep_time % 3600) / 60)
+        def fmt_next(pt):
+            s = self._calculate_sleep_time(pt)
+            return f"{int(s/3600)}小时{int((s%3600)/60)}分钟"
 
-        yield event.plain_result(
-            f"每日60s新闻插件正在运行\n"
-            f"推送时间: {self.push_time}\n"
-            f"接口返回格式: {self.format}\n"
-            f"距离下次推送还有: {hours}小时{minutes}分钟"
-        )
+        lines = ["每日60s新闻插件正在运行"]
+        for name, pt, enabled in [
+            ("新闻", self.news_push_time, self.enable_news),
+            ("摸鱼", self.moyu_push_time, self.enable_moyu),
+            ("金价", self.gold_push_time, self.enable_gold),
+            ("AI资讯", self.ai_push_time, self.enable_ai),
+            ("历史今日", self.history_push_time, self.enable_history),
+        ]:
+            if enabled:
+                t = pt or self.push_time
+                lines.append(f"{name}: {t}（下次推送: {fmt_next(pt)}）")
+        yield event.plain_result("\n".join(lines))
 
     
 
@@ -152,14 +169,8 @@ class Daily60sNewsPlugin(Star):
 
     async def terminate(self):
         """插件卸载时调用"""
-        if self._monitoring_task:
-            self._monitoring_task.cancel()
-        if hasattr(self, "_moyu_task") and self._moyu_task:
-            self._moyu_task.cancel()
-        if hasattr(self, "_gold_task") and self._gold_task:
-            self._gold_task.cancel()
-        if hasattr(self, "_ai_task") and self._ai_task:
-            self._ai_task.cancel()
+        for t in getattr(self, "_tasks", []):
+            t.cancel()
         logger.info("每日60s新闻插件: 定时任务已停止")
 
     async def _fetch_news_text(self) -> Tuple[str, bool]:
@@ -276,17 +287,12 @@ class Daily60sNewsPlugin(Star):
             logger.error(f"[每日新闻] 推送新闻失败: {error_message}")
             logger.exception("详细错误信息：")
 
-    def _calculate_sleep_time(self) -> float:
-        """
-        计算距离下次推送的秒数
-        :return: 距离下次推送的秒数
-        """
+    def _calculate_sleep_time(self, push_time: str = "") -> float:
+        """计算距离下次推送的秒数，push_time 为空则使用全局 push_time"""
         now = datetime.datetime.now()
-        # 支持多个时间点，使用中文或英文逗号分隔
-        time_strs = self.push_time.replace("，", ",").split(",")
+        time_str = (push_time or self.push_time).replace("，", ",")
         candidates = []
-        
-        for t_str in time_strs:
+        for t_str in time_str.split(","):
             parts = t_str.strip().split(":")
             if len(parts) != 2:
                 continue
@@ -298,47 +304,50 @@ class Daily60sNewsPlugin(Star):
                 candidates.append(target)
             except ValueError:
                 continue
-        
         if not candidates:
-            # 默认 fallback 到 08:00
             target = now.replace(hour=8, minute=0, second=0, microsecond=0)
             if target <= now:
                 target += datetime.timedelta(days=1)
             candidates.append(target)
-            
-        next_push = min(candidates)
-        return (next_push - now).total_seconds()
+        return (min(candidates) - now).total_seconds()
 
     
 
-    async def _daily_task(self):
-        """
-        定时任务主循环，定时推送新闻
-        """
+    async def _item_task(self, item: str):
+        """各内容类型独立定时任务"""
+        push_time_map = {
+            "news": self.news_push_time,
+            "moyu": self.moyu_push_time,
+            "gold": self.gold_push_time,
+            "ai": self.ai_push_time,
+            "history": self.history_push_time,
+        }
+        push_time = push_time_map.get(item, "")
         while True:
             try:
-                sleep_time = self._calculate_sleep_time()
-                logger.info(f"[定时推送] 下次推送将在 {sleep_time / 3600:.2f} 小时后")
+                sleep_time = self._calculate_sleep_time(push_time)
+                logger.info(f"[{item}] 下次推送将在 {sleep_time / 3600:.2f} 小时后")
                 await asyncio.sleep(sleep_time)
-                if self.enable_news:
+                if item == "news" and self.enable_news:
                     await self._send_daily_news_to_groups()
-                if self.enable_moyu:
+                elif item == "moyu" and self.enable_moyu:
                     await self._moyu_send_to_groups()
-                if self.enable_gold:
+                elif item == "gold" and self.enable_gold:
                     await self._gold_send_to_groups()
-                if self.enable_ai:
+                elif item == "ai" and self.enable_ai:
                     _w = datetime.datetime.now().weekday()
                     if _w not in (6, 0):
                         await self._ai_send_to_groups()
                     else:
                         logger.info("[AI资讯] 星期日或星期一不推送")
-                if self.enable_history:
+                elif item == "history" and self.enable_history:
                     await self._send_history_to_groups()
                 await asyncio.sleep(60)
             except Exception as e:
-                logger.error(f"[nyscheduler] 定时任务出错: {e}")
+                logger.error(f"[{item}] 定时任务出错: {e}")
                 traceback.print_exc()
                 await asyncio.sleep(300)
+
 
     @filter.command_group("摸鱼管理")
     def moyu(self):
